@@ -4,22 +4,51 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.silencefly96.pdca.databinding.FragmentPlanListBinding
-import com.silencefly96.pdca.R
 
-class PlanListFragment(viewModel: PlanViewModel): Fragment() {
+class PlanListFragment(private val viewModel: PlanViewModel): Fragment() {
 
     private var _binding: FragmentPlanListBinding? = null
 
     private val binding get() = _binding!!
 
+    private lateinit var adapter: PlanAdapter
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentPlanListBinding.inflate(inflater, container, false)
 
-        binding.text.text = getString(R.string.app_name)
+        val layoutManager = LinearLayoutManager(activity)
+        binding.list.layoutManager = layoutManager
+        adapter = PlanAdapter(viewModel.planList)
+        binding.list.adapter = adapter
+
+        viewModel.allResult.observe(viewLifecycleOwner, {result ->
+            if (result.isFailure) {
+                Toast.makeText(context, "get all plan fail", Toast.LENGTH_SHORT).show()
+            }
+
+            val plans = result.getOrNull()
+            plans?.let {
+                viewModel.planList.clear()
+                viewModel.planList.addAll(plans)
+                viewModel.planList.sortBy{
+                    it.state
+                }
+                adapter.notifyDataSetChanged()
+            }
+        })
+
+
 
         return binding.root
+    }
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.getAll()
     }
 
     override fun onDestroyView() {
@@ -30,4 +59,6 @@ class PlanListFragment(viewModel: PlanViewModel): Fragment() {
     companion object {
         fun newInstance(viewModel: PlanViewModel) = PlanListFragment(viewModel)
     }
+
+
 }

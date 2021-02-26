@@ -24,7 +24,7 @@
 
         <variable
             name="listener"
-            type="com.silencefly96.pdca.plan.PlanDetailFragment.OnOperateListener" />
+            type="com.silencefly96.pdca.plan.PlanTestFragment.OnOperateListener" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

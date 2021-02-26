@@ -5,13 +5,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.silencefly96.pdca.databinding.FragmentPlanDetailBinding
+import com.silencefly96.pdca.databinding.FragmentPlanTestBinding
 
-class PlanDetailFragment(val viewModel: PlanViewModel): Fragment() {
+class PlanTestFragment(val viewModel: PlanViewModel): Fragment() {
 
-    private var _binding: FragmentPlanDetailBinding? = null
+    private var _binding: FragmentPlanTestBinding? = null
 
     private val binding get() = _binding!!
 
@@ -20,7 +19,7 @@ class PlanDetailFragment(val viewModel: PlanViewModel): Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentPlanDetailBinding.inflate(inflater, container, false)
+        _binding = FragmentPlanTestBinding.inflate(inflater, container, false)
 
         binding.listener = object : OnOperateListener {
 
@@ -124,7 +123,7 @@ class PlanDetailFragment(val viewModel: PlanViewModel): Fragment() {
     }
 
     companion object {
-        fun newInstance(viewModel: PlanViewModel) = PlanDetailFragment(viewModel)
+        fun newInstance(viewModel: PlanViewModel) = PlanTestFragment(viewModel)
     }
 
 

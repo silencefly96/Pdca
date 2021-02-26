@@ -89,7 +89,7 @@ class PlanRepository(
         }
     }
 
-    fun <T> runAsLiveData(context: CoroutineContext, block: suspend () -> Result<T>) =
+    private fun <T> runAsLiveData(context: CoroutineContext, block: suspend () -> Result<T>) =
         liveData(context) {
             val result = try {
                 block()

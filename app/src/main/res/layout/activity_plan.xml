@@ -15,7 +15,7 @@
             android:layout_height="match_parent"
             android:clickable="true"
             android:focusable="true"
-            android:background="@color/gray"
+            android:background="@color/background"
             />
 
     </LinearLayout>
@@ -28,7 +28,7 @@
         android:layout_gravity="start"
         android:clickable="true"
         android:focusable="true"
-        android:background="@color/gray"
+        android:background="@color/background"
         />
 
 </androidx.drawerlayout.widget.DrawerLayout>
