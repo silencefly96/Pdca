@@ -1,5 +1,6 @@
 package com.silencefly96.pdca.plan.model
 
+import android.util.Log
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -10,7 +11,7 @@ import androidx.room.PrimaryKey
 data class Plan constructor(
 
         @PrimaryKey(autoGenerate = true)
-        var id: Long = 0,
+        val id: Long = 0,
 
         //状态：0 - P，1 - D，2 - C，3 - A，4 - END
         var state: Int = 0,

@@ -7,9 +7,9 @@ import com.silencefly96.pdca.common.replaceFragment
 import com.silencefly96.pdca.databinding.ActivityPlanBinding
 import com.silencefly96.pdca.plan.model.Injection
 
-private lateinit var binding: ActivityPlanBinding
-
 class PlanActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityPlanBinding
 
     lateinit var planViewModel: PlanViewModel
 

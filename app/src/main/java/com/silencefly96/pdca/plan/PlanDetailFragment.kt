@@ -1,15 +1,15 @@
 package com.silencefly96.pdca.plan
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.silencefly96.pdca.databinding.FragmentPlanDetailBinding
+import com.silencefly96.pdca.plan.model.Plan
 
-class PlanDetailFragment(val viewModel: PlanViewModel): Fragment() {
+class PlanDetailFragment(private val viewModel: PlanViewModel): Fragment() {
 
     private var _binding: FragmentPlanDetailBinding? = null
 
@@ -22,96 +22,63 @@ class PlanDetailFragment(val viewModel: PlanViewModel): Fragment() {
     ): View {
         _binding = FragmentPlanDetailBinding.inflate(inflater, container, false)
 
-        binding.listener = object : OnOperateListener {
+        //设置绑定数据
+        binding.viewModel = viewModel
 
-            override fun all() {
-                Log.e("TAG", "all: ")
-                viewModel.getAll()
-            }
-
-            override fun add() {
-                Log.e("TAG", "add: ")
-                viewModel.add(
-                    binding.id.text.toString().toLong(),
-                    binding.title.text.toString(),
-                    binding.content.text.toString()
-                )
-            }
-
-            override fun delete() {
-                Log.e("TAG", "delete: ")
-                viewModel.delete(binding.id.text.toString().toLong())
-            }
-
-            override fun query() {
-                Log.e("TAG", "query: ")
-                viewModel.query(binding.id.text.toString().toLong())
-            }
-
-            override fun update() {
-                Log.e("TAG", "update: ")
-                viewModel.update(
-                    binding.id.text.toString().toLong(),
-                    binding.title.text.toString(),
-                    binding.content.text.toString()
-                )
-            }
-        }
-
-        viewModel.allResult.observe(viewLifecycleOwner, { result ->
-            if (result.isFailure) {
-                binding.output.append("get all plan: fail\n${result.exceptionOrNull()?.message}\n")
-            }
-
-            val plans = result.getOrNull()
-            plans?.let {
-                binding.output.append("get all plan:\n")
-                for(plan in it)
-                    binding.output.append(plan.toString() + "\n")
-            }
-        })
-
-        viewModel.addResult.observe(viewLifecycleOwner, {
-            if (it.isFailure) {
-                binding.output.append("add: fail\n${it.exceptionOrNull()?.message}\n")
-            }
-
-            val result = it.getOrNull()
-            result?.let {id ->
-                binding.output.append("add id = $id\n")
-            }
-        })
-
-        viewModel.deleteResult.observe(viewLifecycleOwner, {
-            if (it.isFailure) {
-                binding.output.append("delete: fail\n${it.exceptionOrNull()?.message}\n")
-            }
-
-            val result = it.getOrNull()
-            result?.let {id ->
-                binding.output.append("delete id = $id\n")
+        //监听选择id变化
+        viewModel.currentId.observe(viewLifecycleOwner, { id ->
+            if(id >= 0) {
+                binding.button.text = "更新"
+                //更新数据
+                viewModel.queryId.value = id
+                binding.button.setOnClickListener{
+                    viewModel.updatePlan.value = viewModel.currentPlan.value
+                }
+            }else {
+                binding.button.text = "新增"
+                //将绑定数据设置成新数据
+                viewModel.currentPlan.value = Plan()
+                //手动刷新一下。。。
+                binding.viewModel = viewModel
+                binding.button.setOnClickListener {
+                    viewModel.addPlan.value = viewModel.currentPlan.value
+                }
             }
         })
 
         viewModel.queryResult.observe(viewLifecycleOwner, { result ->
             if (result.isFailure) {
-                binding.output.append("query: fail\n${result.exceptionOrNull()?.message}\n")
+                Toast.makeText(activity, "更新数据失败", Toast.LENGTH_SHORT).show()
             }
 
             val plan = result.getOrNull()
             plan?.let {
-                binding.output.append("query plan:\n$it\n")
+                //获取到新数据的时候，更新绑定数据
+                viewModel.currentPlan.value = it
+                //手动刷新一下。。。
+                binding.viewModel = viewModel
             }
         })
 
         viewModel.updateResult.observe(viewLifecycleOwner, {
             if (it.isFailure) {
-                binding.output.append("update: fail\n${it.exceptionOrNull()?.message}\n")
+                Toast.makeText(activity, "获取数据失败", Toast.LENGTH_SHORT).show()
             }
 
             val result = it.getOrNull()
             result?.let {id ->
-                binding.output.append("update id = $id\n")
+                Toast.makeText(activity, "更新数据成功: id = $id", Toast.LENGTH_SHORT).show()
+            }
+        })
+
+        viewModel.addResult.observe(viewLifecycleOwner, {
+            if (it.isFailure) {
+                Toast.makeText(activity, "获取数据失败", Toast.LENGTH_SHORT).show()
+            }
+
+            val result = it.getOrNull()
+            result?.let {id ->
+                Toast.makeText(activity, "添加数据成功: id = $id", Toast.LENGTH_SHORT).show()
             }
         })
 
@@ -125,14 +92,5 @@ class PlanDetailFragment(val viewModel: PlanViewModel): Fragment() {
 
     companion object {
         fun newInstance(viewModel: PlanViewModel) = PlanDetailFragment(viewModel)
-    }
-
-
-    interface OnOperateListener {
-        fun all()
-        fun add()
-        fun delete()
-        fun query()
-        fun update()
     }
 }

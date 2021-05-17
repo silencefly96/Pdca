@@ -20,11 +20,22 @@ class PlanListFragment(private val viewModel: PlanViewModel): Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentPlanListBinding.inflate(inflater, container, false)
 
+        //设置列表相关
         val layoutManager = LinearLayoutManager(activity)
         binding.list.layoutManager = layoutManager
-        adapter = PlanAdapter(viewModel.planList)
+        adapter = PlanAdapter(viewModel.planList, object: OnSelectListener{
+            override fun onSelect(id: Long) {
+                viewModel.currentId.value = id
+            }
+        })
         binding.list.adapter = adapter
 
+        //选择增加，无id
+        binding.addButton.setOnClickListener {
+            viewModel.currentId.value = -1
+        }
+
+        //监听获取全部数据
         viewModel.allResult.observe(viewLifecycleOwner, {result ->
             if (result.isFailure) {
                 Toast.makeText(context, "get all plan fail", Toast.LENGTH_SHORT).show()
@@ -41,14 +52,13 @@ class PlanListFragment(private val viewModel: PlanViewModel): Fragment() {
             }
         })
 
-
-
         return binding.root
     }
 
     override fun onStart() {
         super.onStart()
-        viewModel.getAll()
+        //初始化获取数据
+        viewModel.allLiveData.value = Math.random()
     }
 
     override fun onDestroyView() {
